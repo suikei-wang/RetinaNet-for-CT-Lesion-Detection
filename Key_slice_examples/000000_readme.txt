@@ -1,0 +1,1 @@
+This folder contains random image examples chosen from Key_slices.zip, which are key slices with overlaid lesion annotations for illustration purposes.
