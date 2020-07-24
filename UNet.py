@@ -89,9 +89,9 @@ Two-Conv -> Down -> Down -> Down -> Down -> Up -> Up -> Up -> Up -> Final
 """
 class UNet(nn.Module):
     def __init__(self, in_channels, n_classes):
+        super(UNet, self).__init__()
         self.in_channels = in_channels
         self.n_classes = n_classes
-        
         self.two_conv = TwoConv(in_channels, 64)
         
         self.Down1 = Downsampling(64, 128)

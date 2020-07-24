@@ -8,6 +8,7 @@ import os
 from zipfile import ZipFile 
 import cv2
 import shutil
+import torch
 import torch.utils.data.dataset as dataset
 import re
 
@@ -103,10 +104,11 @@ class ToTensor(object):
                 'lesions': torch.from_numpy(lesions)}
 
 class ImageDataset(dataset.Dataset):
-    def __init__ (self, root_dir, dataset_type, csv_file=csv_path):
+    def __init__ (self, root_dir, dataset_type, csv_path, data_file):
         self.root_dir = root_dir
         self.csv_path = csv_path
-        self.df = pd.read_csv(csv_path)[df['Train_Val_Test']==dataset_type]
+        self.df = pd.read_csv(csv_path)[data_file['Train_Val_Test']==dataset_type]
+        self.img_transform = ToTensor()
     def __len__(self):
         return len(self.df.index)
     def __getitem__(self, idx):
@@ -125,10 +127,9 @@ class ImageDataset(dataset.Dataset):
             
         lesions = np.asarray(lesions)
         sample = {'image':image, 'lesions':lesions}
-        
+        sample = self.img_transform(sample)
+#         sample['Filename'] = self.df.iloc[idx]['File_name']
         return sample
-
-
 
 
 def main():
@@ -193,9 +194,9 @@ def main():
     
     
     # Custom Dataloader
-    train_dataset = ImageDataset(root_dir=Image_slices_dir, dataset_type=1)
-    validation_dataset = ImageDataset(root_dir=Image_slices_dir, dataset_type=2)
-    test_dataset = ImageDataset(root_dir=Image_slices_dir, dataset_type=3)
+    train_dataset = ImageDataset(root_dir=Image_slices_dir, dataset_type=1, csv_path=csv_path, data_file=df)
+    validation_dataset = ImageDataset(root_dir=Image_slices_dir, dataset_type=2, csv_path=csv_path, data_file=df)
+    test_dataset = ImageDataset(root_dir=Image_slices_dir, dataset_type=3, csv_path=csv_path, data_file=df)
 
 
     print(len(train_dataset))
