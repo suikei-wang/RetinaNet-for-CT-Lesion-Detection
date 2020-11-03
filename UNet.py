@@ -40,7 +40,7 @@ class Downsampling(nn.Module):
             TwoConv(in_channels, out_channels)
         )
     def forward(self, x):
-        return self.down_sampling
+        return self.down_sampling(x)
     
 """
 Upsampling Layers (Expansive Path, ↑ and =>)
